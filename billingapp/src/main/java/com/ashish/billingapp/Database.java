@@ -819,5 +819,36 @@ public void conversionUnit() {
  
  return "Success";  
 } 
-}
+ 
+ 
+ //----------------------------------------------------------------
+ public void jsondata() {
+	 String str= "{\"Number\":[101,102,103,104]}";
+	 try {
+		 String st1="insert into test values(?)" ;
+	 
+	 JSONObject jo=new JSONObject(str);
+	 JSONArray arr;
+	 arr=jo.getJSONArray("Number");
+	 for(int i=0;i<arr.length();i++) {
+		 //Statement st=con.createStatement();
+		 //Resultset rs=st.executeQuery(st1);
+		 PreparedStatement st=con.prepareStatement(st1);
+		 st.setString(1,arr.getString(i));
+		 st.executeUpdate();
+		 System.out.println(arr.getString(i));
+	 }
+	 }
+	 catch(Exception e) {
+		 System.out.println(e);
+	 }
+ }
+	 
+	 	
+	 		 		
+ }
+ 
+ 
+ 
+
  

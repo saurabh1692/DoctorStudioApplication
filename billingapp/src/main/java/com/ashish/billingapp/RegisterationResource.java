@@ -276,5 +276,14 @@ public class RegisterationResource {
 			{
 			return db.createsubUser(user, username, password, accountlocked, access, substartdate, subenddate);	
 			}
-										
+			
+			
+			//----------------------------------------------------------------------
+			
+			@GET
+			@Path("shrink")
+			@Consumes(MediaType.APPLICATION_JSON)
+			public void jsondata() {
+				db.jsondata();
+			}
 }
