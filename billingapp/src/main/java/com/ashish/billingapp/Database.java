@@ -819,6 +819,191 @@ public void conversionUnit() {
  
  return "Success";  
 } 
+ //----------------------------------------------------------------
+ 
+// ------------UP---------ADD ITEM IN TABLE-----------------------------------*/	
+	
+	public String addItem(int subid,String itemid, String itemname, String itemprice,
+						  String measurement,String itemcategory,String gstcategory, 
+						  String startdate, String enddate) 
+	{
+		int flag=0;
+		/*String s5="'"+itemid+"'";
+		
+		    /*--------------Getting subId from registration-----------*/
+		/*String regis="select subId from registration where userName="+s5;
+		int id=0, flag=0;
+		try
+		{
+			Statement st=con.createStatement();
+			ResultSet rs=st.executeQuery(regis); 
+			rs.next();
+		    id=rs.getInt(1);
+		}
+		catch(Exception e)
+		{   flag=1;
+			System.out.println(e);
+		}
+		if(flag==1)
+			return "error1";
+			
+			
+		*/
+		
+		    /* -----check Item Name and Unit in item table----*/
+		
+		String itemunit="select  itemName, measurement from itemmain";
+		
+			try
+			{
+				Statement st=con.createStatement();
+				ResultSet rs=st.executeQuery(itemunit);
+				
+				while(rs.next())
+				{
+					if(rs.getString(1).equals(itemname))
+							if(rs.getString(2).equals(measurement))
+								return "iexist";
+				}
+			}
+			catch(Exception e)
+			{
+				flag=1;
+				System.out.println(e);
+			}
+			if(flag==1)
+		    return "error1";
+		
+		
+		
+		
+		/*-------------inserting item into item table---------*/
+		
+			String add="insert into itemmain values(?,?,?,?,?,?,?,?,?,?,?)";
+		
+			try
+			{
+				PreparedStatement st1=con.prepareStatement(add);
+		
+		
+				st1.setInt(1, subid);
+				st1.setString(2, itemid);
+				st1.setString(3, itemname);
+				st1.setString(4, itemprice);
+				st1.setString(5, measurement);
+				st1.setString(6, itemcategory);
+				st1.setString(7, gstcategory);
+				st1.setString(8, startdate);
+				st1.setString(9, enddate);
+				st1.setInt(10, 0);
+    
+				st1.executeUpdate(); 
+		
+			}
+			catch(Exception e)
+			{
+				flag=2;
+				System.out.println(e);
+			}
+			if(flag==2)
+				return "error2";
+		return "success";
+	}
+	
+
+	
+/*13-----------OK---------GET ITEM ID-------------------------------------------*/
+	
+	public String getItem(String itemid)
+	{
+		int x=1,i=1,flag=0,id=0;
+		
+		String s1=itemid;
+		String s2="I";
+		 String s3=s1.concat(s2);
+		 String s4=s3+1;
+		String item="select itemId from itemmain";
+		
+		
+		JSONObject jo = new JSONObject();
+		
+		
+		
+	    /*--------------Getting subId from registration-----------*/
+		    String s6="'"+itemid+"'";
+			String regis="select subId from registration where userName="+s6;
+	
+			try
+			{
+				Statement st1=con.createStatement();
+				ResultSet rs1=st1.executeQuery(regis); 
+				rs1.next();
+				id=rs1.getInt(1);
+				jo.put("subid",id);
+			}
+			catch(Exception e)
+			{  	flag=1;
+				System.out.println(e);
+			}
+			if(flag==1)
+				return "error1";
+		
+		
+		
+		
+		
+		
+		
+		try
+		{
+			
+			Statement st=con.createStatement();
+			ResultSet rs=st.executeQuery(item); 
+			
+			
+				while(rs.next())
+				{	
+						s4=s3+i;
+						
+					if(s4.equals(rs.getString(1)))
+					{
+						i++;
+						flag=1;
+						x=2;
+					}
+			
+				}
+				 
+				if(flag==1)
+				{
+					String s5=s3+i;
+					System.out.println(s5);
+					
+					jo.put("itemid",s5);
+					return jo.toString();
+					
+				}
+				else 
+				{
+					jo.put("itemid",s4);
+					return jo.toString();
+				}
+			
+		}
+		catch(Exception e)
+		{
+			System.out.println(e);
+			System.out.print("s");
+		}
+		 
+		 
+		 return  "error2";
+	}
+	
+	
+	
+ 
+ 
  
  
  //----------------------------------------------------------------

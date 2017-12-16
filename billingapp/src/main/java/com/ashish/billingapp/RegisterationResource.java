@@ -276,7 +276,19 @@ public class RegisterationResource {
 			{
 			return db.createsubUser(user, username, password, accountlocked, access, substartdate, subenddate);	
 			}
+			//----------------------------------------------------------------------
 			
+			@GET
+			@Path("additem")
+			@Consumes(MediaType.APPLICATION_JSON)
+			 public String addItem(@QueryParam("subid") int subid, @QueryParam("itemid") String itemid,@QueryParam("itemname") String itemname,
+					   @QueryParam("price") String itemprice,@QueryParam("measure") String measurement,
+					   @QueryParam("icategory") String itemcategory,@QueryParam("gcategory") String gstcategory,
+					   @QueryParam("sdate") String startdate,@QueryParam("edate") String enddate)
+			   {
+				   return db.addItem(subid,itemid,itemname,itemprice,measurement,itemcategory,
+						              gstcategory, startdate,  enddate);
+			   }
 			
 			//----------------------------------------------------------------------
 			
@@ -286,4 +298,5 @@ public class RegisterationResource {
 			public void jsondata() {
 				db.jsondata();
 			}
+			
 }
