@@ -141,7 +141,7 @@ public class Database
 		  		+ "accountlock,substartdate,subenddate) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 	String log="insert into logincontrol(username,password,accountlock,access,forchgpwd) values(?,?,?,?,?)";
 		
-	System.out.println("enter");
+	//System.out.println("enter");
 	
 	try {
 			     Statement st=con.createStatement();
@@ -825,7 +825,7 @@ public void conversionUnit() {
 	
 	public String addItem(int subid,String itemid, String itemname, String itemprice,
 						  String measurement,String itemcategory,String gstcategory, 
-						  String startdate, String enddate) 
+						  String startdate, String enddate,int count,String version) 
 	{
 		int flag=0;
 		/*String s5="'"+itemid+"'";
@@ -895,7 +895,8 @@ public void conversionUnit() {
 				st1.setString(7, gstcategory);
 				st1.setString(8, startdate);
 				st1.setString(9, enddate);
-				st1.setInt(10, 0);
+				st1.setInt(10, count);
+				st1.setString(11,version);
     
 				st1.executeUpdate(); 
 		
@@ -1006,30 +1007,133 @@ public void conversionUnit() {
  
  
  
- //----------------------------------------------------------------
- public void jsondata() {
-	 String str= "{\"Number\":[101,102,103,104]}";
-	 try {
-		 String st1="insert into test values(?)" ;
+ //--------------------------------------Synchonization data--------------------------
+ public String data(String str) {
+	// String str= "{\"subid\":[?],\"itemid\":[?],\"itemname\":[?],\"itemprice\":[?],"
+	 //			+ "\"itemid\":[?]}";
+	int flag=0;
+	int temp=0;
+	String key="select max(id) from itemmain";
+	try {
+		Statement st=con.createStatement();
+		ResultSet rs=st.executeQuery(key);
+		rs.next();
+		temp=rs.getInt(1);
+	}
+	catch(Exception e){
+		System.out.println();
+	}
 	 
-	 JSONObject jo=new JSONObject(str);
-	 JSONArray arr;
-	 arr=jo.getJSONArray("Number");
-	 for(int i=0;i<arr.length();i++) {
+	String st1="insert into test values(?,?,?,?,?,?,?,?,?,?,?)" ;
+	 
+	try {
+	 
+		 JSONObject jo=new JSONObject(str);
+	 
+	 JSONArray arr =jo.getJSONArray("subid");
+	 JSONArray arr1 =jo.getJSONArray("itemid");
+	 JSONArray arr2 =jo.getJSONArray("itemname");
+	 JSONArray arr3 =jo.getJSONArray("itemprice");
+	 JSONArray arr4 =jo.getJSONArray("measurement");
+	 JSONArray arr5 =jo.getJSONArray("itemcategory");
+	 JSONArray arr6 =jo.getJSONArray("gstcategory");
+	 JSONArray arr7 =jo.getJSONArray("startdate");
+	 JSONArray arr8 =jo.getJSONArray("enddate");
+	 JSONArray arr9 =jo.getJSONArray("count");
+	 JSONArray arr10 =jo.getJSONArray("version");
+	 
+	 
+	 for(int i=0;i<arr.length() && i<arr1.length() &&i<arr2.length() &&i<arr3.length() &&
+			 i<arr4.length() &&i<arr5.length() &&i<arr6.length() &&i<arr7.length() &&
+			 i<arr8.length() &&i<arr9.length() &&i<arr10.length();i++) {
 		 //Statement st=con.createStatement();
 		 //Resultset rs=st.executeQuery(st1);
+		 
 		 PreparedStatement st=con.prepareStatement(st1);
-		 st.setString(1,arr.getString(i));
+		 
+		 st.setInt(1,arr.getInt(i));
+		 st.setString(2, arr1.getString(i));
+		 st.setString(3, arr2.getString(i));
+		 st.setString(4, arr3.getString(i));
+		 st.setString(5, arr4.getString(i));
+		 st.setString(6, arr5.getString(i));
+		 st.setString(7, arr6.getString(i));
+		 st.setString(8, arr7.getString(i));
+		 st.setString(9, arr8.getString(i));
+		 st.setString(10, 
+				 
+				 
+				  arr9.getString(i));
+		 st.setString(11,arr10.getString(i));
+		 //st.setString(12,arr11.getString(i));
+		 
 		 st.executeUpdate();
+		 
 		 System.out.println(arr.getString(i));
 	 }
 	 }
 	 catch(Exception e) {
+		 flag=1;
 		 System.out.println(e);
 	 }
+	if(flag==1)
+	{
+		return "not inserted";
+	}
+	return "success";
  }
+	 //--------------------------------------------------------------------------
+	 	public String loginsync(String str) {
+	 		
+	 		String user="select * from logincontrol";
+	 		try {
+	 		JSONObject jo=new JSONObject(str);
+	 		JSONArray arr=jo.getJSONArray("username");
+	 		
+	 		
+	 		JSONObject jo1=new JSONObject();
+	 		
+	 		JSONArray arr1=new JSONArray();
+	 		JSONArray arr2=new JSONArray();
+ 			JSONArray arr3=new JSONArray();
+ 			JSONArray arr4=new JSONArray();
+ 			JSONArray arr5=new JSONArray();
+ 			
+ 			jo1.put("username", arr1);
+ 			jo1.put("password", arr2);
+ 			jo1.put("accountlock", arr3);
+ 			jo1.put("access", arr4);
+ 			jo1.put("forchgpwd", arr5);
 	 
+	 			for(int i=0;i<arr.length();i++) {
+	 				
+	 			Statement st=con.createStatement();
+	 			ResultSet rs=st.executeQuery(user);
+	 			while(rs.next()) {
+	 				System.out.println("Hello");
+	 				if(arr.getString(i).equals(rs.getString(1))) {
+	 				arr1.put(rs.getString(1));
+	 				arr2.put(rs.getString(2));
+	 				arr3.put(rs.getString(3));
+	 				arr4.put(rs.getString(4));
+	 				arr5.put(rs.getString(5));
+	 				
+	 				}
+	 				
+	 			}
+	 			
+	 		}
+	 			return jo1.toString();
+	 		}
+	 		catch(Exception e) {
+	 			System.out.println(e);
+	 		}
+	 		
+	 		
 	 	
+	 		
+	 		return "hi";
+	 		}
 	 		 		
  }
  

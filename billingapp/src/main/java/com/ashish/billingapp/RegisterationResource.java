@@ -12,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.json.JSONObject;
+
 @Path("registration")
 public class RegisterationResource {
 	//Register a1=new Register();
@@ -58,7 +60,7 @@ public class RegisterationResource {
    @Consumes(MediaType.APPLICATION_JSON)
    //@Produces(MediaType.APPLICATION_XML)
    public String createuser(@QueryParam("user") String username,
-	        @QueryParam("pswd") String password,
+	        @QueryParam("pass") String password,
 	        @QueryParam("shop") String shopname,@QueryParam("add") String address,
 	        @QueryParam("mnum") String mobilenumber,@QueryParam("email") String emailid,
 	        @QueryParam("gstn") String gstnumber,@QueryParam("accl") String accountlock,
@@ -284,19 +286,28 @@ public class RegisterationResource {
 			 public String addItem(@QueryParam("subid") int subid, @QueryParam("itemid") String itemid,@QueryParam("itemname") String itemname,
 					   @QueryParam("price") String itemprice,@QueryParam("measure") String measurement,
 					   @QueryParam("icategory") String itemcategory,@QueryParam("gcategory") String gstcategory,
-					   @QueryParam("sdate") String startdate,@QueryParam("edate") String enddate)
+					   @QueryParam("sdate") String startdate,@QueryParam("edate") String enddate,
+					   @QueryParam("count") int count,@QueryParam("version") String version )
 			   {
 				   return db.addItem(subid,itemid,itemname,itemprice,measurement,itemcategory,
-						              gstcategory, startdate,  enddate);
+						              gstcategory, startdate,enddate,count,version);
 			   }
 			
 			//----------------------------------------------------------------------
 			
-			@GET
+			@POST
 			@Path("shrink")
 			@Consumes(MediaType.APPLICATION_JSON)
-			public void jsondata() {
-				db.jsondata();
+			public String jsondata(@QueryParam("recieve") String str) {
+				return db.data(str);
+			}
+			
+			
+			@POST
+			@Path("loginshrink")
+			@Consumes(MediaType.APPLICATION_JSON)
+			public String loginsync( String str) {
+				return db.loginsync(str);
 			}
 			
 }
